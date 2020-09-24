@@ -12,12 +12,11 @@ public class Threads {
 
         System.out.println(ThreadColor.ANSI_BLUE + "Hello again from the main thread");
 //        Thread someClassThread = new Thread(new SomeClass());
-        Thread someClassThread = new Thread(new SomeClass() {
-            @Override
-            public void run() {
-                System.out.println("Overrided");
-            }
+        Thread someClassThread = new Thread(() -> {
+            System.out.println("Overrided");
         });
         someClassThread.start();
+
+        Thread someNewThred = new Thread(new SomeClass());
     }
 }
