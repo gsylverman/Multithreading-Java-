@@ -1,3 +1,5 @@
+import javax.naming.InterruptedNamingException;
+
 public class Threads {
     public static void main(String[] args) {
         System.out.println(ThreadColor.ANSI_BLUE + "hello from main thread");
@@ -13,7 +15,13 @@ public class Threads {
         System.out.println(ThreadColor.ANSI_BLUE + "Hello again from the main thread");
 //        Thread someClassThread = new Thread(new SomeClass());
         Thread someClassThread = new Thread(() -> {
-            System.out.println("Overrided");
+            System.out.println("Override");
+            try {
+                anotherThread.join(); //wait for another tread to finish before starting
+                System.out.println("another thread terminated so I am running again");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         });
         someClassThread.start();
 

@@ -5,7 +5,8 @@ public class AnotherThread extends Thread {
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.out.println("Another thread wake me up" + currentThread().getName());
+            return;
         }
         System.out.println("3 sec have passed, I am awake: " + currentThread().getName());
 
