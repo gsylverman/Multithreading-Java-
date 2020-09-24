@@ -3,6 +3,7 @@ package Volatile;
 import java.util.Scanner;
 
 class Processor extends Thread {
+   // volatile keyword guarantees that all threads see the shared state
     private volatile boolean running = true;
     private int nr = 0;
 
