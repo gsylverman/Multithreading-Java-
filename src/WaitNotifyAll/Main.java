@@ -22,7 +22,6 @@ class Message {
             } catch (InterruptedException e) {
 
             }
-
         }
         empty = true;
         notifyAll();
@@ -34,9 +33,8 @@ class Message {
             try {
                 wait();
             } catch (InterruptedException e) {
-
+                e.printStackTrace();
             }
-
         }
         empty = false;
         this.message = message;
@@ -69,7 +67,7 @@ class Writer implements Runnable {
             try {
                 Thread.sleep(random.nextInt(2000));
             } catch (InterruptedException e) {
-
+                e.printStackTrace();
             }
         }
         message.write("Finished");
