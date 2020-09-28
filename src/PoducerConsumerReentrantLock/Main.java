@@ -1,8 +1,12 @@
 package PoducerConsumerReentrantLock;
 
+import javax.security.sasl.SaslServer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 class Main {
@@ -15,10 +19,29 @@ class Main {
         MyConsumer myConsumer1 = new MyConsumer(listX, listReentrantLock);
         MyConsumer myConsumer2 = new MyConsumer(listX, listReentrantLock);
 
-        new Thread(myProducer).start();
-        new Thread(myConsumer1).start();
-        new Thread(myConsumer2).start();
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+//        executor.submit(myProducer);
+//        executor.submit(myConsumer1);
+//        executor.submit(myConsumer2);
 
+        executor.execute(myProducer);
+        executor.execute(myConsumer1);
+        executor.execute(myConsumer2);
+
+        executor.shutdown();
+
+        long startTime = System.currentTimeMillis();
+        try {
+            executor.awaitTermination(1, TimeUnit.DAYS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        long endTime = System.currentTimeMillis();
+
+        System.out.println("Finisehd in: " + (endTime - startTime) / 1000 + " seconds");
+//        new Thread(myProducer).start();
+//        new Thread(myConsumer1).start();
+//        new Thread(myConsumer2).start();
     }
 }
 
