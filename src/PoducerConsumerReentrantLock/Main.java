@@ -1,20 +1,16 @@
 package PoducerConsumerReentrantLock;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.ReentrantLock;
 
 class Main {
     public static final String EOF = "EOF";
 
     public static void main(String[] args) {
-        List<String> listX = new ArrayList<>();
-        ReentrantLock listReentrantLock = new ReentrantLock();
-        MyProducer myProducer = new MyProducer(listX, listReentrantLock);
-        MyConsumer myConsumer1 = new MyConsumer(listX, listReentrantLock);
-        MyConsumer myConsumer2 = new MyConsumer(listX, listReentrantLock);
+        ArrayBlockingQueue<String> listX = new ArrayBlockingQueue<>(6);
+        MyProducer myProducer = new MyProducer(listX);
+        MyConsumer myConsumer1 = new MyConsumer(listX);
+        MyConsumer myConsumer2 = new MyConsumer(listX);
 
         ExecutorService executor = Executors.newFixedThreadPool(4);
 //        executor.submit(myProducer);
@@ -49,12 +45,10 @@ class Main {
 }
 
 class MyProducer implements Runnable {
-    private List<String> list;
-    private ReentrantLock reentrantLock;
+    private ArrayBlockingQueue<String> list;
 
-    public MyProducer(List<String> list, ReentrantLock reentrantLock) {
+    public MyProducer(ArrayBlockingQueue<String> list) {
         this.list = list;
-        this.reentrantLock = reentrantLock;
     }
 
     @Override
@@ -64,58 +58,44 @@ class MyProducer implements Runnable {
         for (String num : nums) {
             try {
                 System.out.println("Adding to list: " + num);
-                reentrantLock.lock();
-                try {
-                    list.add(num);
-                } finally {
-                    reentrantLock.unlock();
-                }
-
+                list.put(num);
                 Thread.sleep(random.nextInt(2000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        reentrantLock.lock();
         try {
-            list.add("EOF");
-        } finally {
-            reentrantLock.unlock();
+            list.put("EOF");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
 
 class MyConsumer implements Runnable {
-    private List<String> list;
-    private ReentrantLock reentrantLock;
+    private ArrayBlockingQueue<String> list;
 
-
-    public MyConsumer(List<String> list, ReentrantLock reentrantLock) {
+    public MyConsumer(ArrayBlockingQueue<String> list) {
         this.list = list;
-        this.reentrantLock = reentrantLock;
     }
 
     @Override
     public void run() {
-        int counter = 0;
         while (true) {
-            if (reentrantLock.tryLock()) {
-                try {
-                    if (list.isEmpty()) {
-                        continue;
-                    }
-                    System.out.println(counter);
-                    if (list.get(0).equals(Main.EOF)) {
-                        System.out.println("Exiting" + Thread.currentThread().getName());
-                        break;
-                    } else {
-                        System.out.println("Removed " + list.remove(0) + ", by " + Thread.currentThread().getName());
-                    }
-                } finally {
-                    reentrantLock.unlock();
+            synchronized (list) {
+                if (list.isEmpty()) {
+                    continue;
                 }
-            } else {
-                counter++;
+                if (list.peek().equals(Main.EOF)) {
+                    System.out.println("Exiting" + Thread.currentThread().getName());
+                    break;
+                } else {
+                    try {
+                        System.out.println("Removed " + list.take() + ", by " + Thread.currentThread().getName());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
