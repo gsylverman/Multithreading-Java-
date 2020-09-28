@@ -1,4 +1,4 @@
-package PoducerConsumer;
+package PoducerConsumerReentrantLock;
 
 import java.util.ArrayList;
 import java.util.List;
