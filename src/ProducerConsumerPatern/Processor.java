@@ -8,7 +8,7 @@ public class Processor {
     private static Random random = new Random();
     private static BlockingQueue<Integer> list = new ArrayBlockingQueue<>(10);
 
-    static void produce() {
+    public void produce() {
         while (true) {
             try {
                 Thread.sleep(10);
@@ -23,7 +23,7 @@ public class Processor {
         }
     }
 
-    static void consume() {
+     public void consume() {
         while (true) {
             if (random.nextInt(10) == 0) {
                 try {
