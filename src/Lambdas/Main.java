@@ -32,9 +32,22 @@ class Main {
 
         String x = "someString1";
         String y = "someOtherString2";
+
+//        String z = makeSomeString(new SomeInterface() {
+//            @Override
+//            public String doStuff(String s1, String s2) {
+//                return s1.concat(s2);
+//            }
+//        }, x, y);
         String z = makeSomeString((p1, p2) -> p1.concat(p2), x, y);
         System.out.println(z);
 
+//        printWithPredicateCondition(list, new Predicate<Employee>() {
+//            @Override
+//            public boolean test(Employee employee) {
+//                return employee.getAge() > 20;
+//            }
+//        });
         printWithPredicateCondition(list, employee -> employee.getAge() > 20);
     }
 
